@@ -2,6 +2,16 @@
 
 > 面试场景下的 AI 实时应答工具，支持语音识别、截图问答、悬浮窗、会议记录和模拟面试。
 
+## 下载安装
+
+**最新版本：v2026.06.12**
+
+[![GitHub Release](https://img.shields.io/badge/download-latest-blue)](https://github.com/ZRegod/FaceTime/releases/latest)
+
+- Windows 安装包：[FaceTime Setup 2026.6.12.exe](https://github.com/ZRegod/FaceTime/releases/download/FaceTimev20260612/FaceTime.Setup.2026.6.12.exe)
+- 支持自定义安装目录（不再强制安装到 C 盘）
+- 完整更新日志：[Release Notes](https://github.com/ZRegod/FaceTime/releases/tag/FaceTimev20260612)
+
 ## 核心功能
 
 - **AI 实时回答** — 输入问题或语音转写，AI 以第一人称给出可直接参考的回答
@@ -14,6 +24,9 @@
 - **历史记录** — 所有对话、会议、面试记录均可查看、复制、导出
 - **多 Key 轮换** — 支持配置多个 API Key，遇到限流自动切换
 - **资料上传** — 上传 JD 和简历，AI 结合背景信息生成更有针对性的回答
+- **两者模式优化** — 详细版和逐字稿同时并行请求，生成中可随时切换查看
+- **触摸屏支持** — 完整支持触摸屏滑动和鼠标滚轮滚动
+- **会议记录优化** — 鼠标悬停显示功能说明，操作更直观
 
 ---
 
@@ -180,6 +193,14 @@ npm run preview
 
 **预加载脚本 (`src/preload/index.ts`)**
 通过 `contextBridge` 暴露 `window.api` 对象，包含 AI、ASR、OCR、屏幕捕获、文件解析等所有主进程功能的调用接口。
+
+### 版本历史
+
+- **v2026.06.12** - 修复滚动卡死、ASR 重复、AI 回答延迟等问题，新增两者模式并行、触摸屏支持、自定义安装目录
+- **v2026.06.11** - 功能优化和 bug 修复
+- **v2026.06.10** - 初始版本发布
+
+完整更新日志请查看 [GitHub Releases](https://github.com/ZRegod/FaceTime/releases)
 
 ### License
 
