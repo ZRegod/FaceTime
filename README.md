@@ -8,10 +8,10 @@
 
 [![GitHub Release](https://img.shields.io/badge/download-latest-blue)](https://github.com/ZRegod/FaceTime/releases/latest)
 
-- Windows 安装包：[FaceTime Setup 2026.6.12.exe](https://github.com/ZRegod/FaceTime/releases/download/FaceTimev260260612/FaceTime%20Setup%202026.6.12.exe)
+- Windows 安装包：[FaceTime Setup 2026.6.12.exe](https://github.com/ZRegod/FaceTime/releases/download/v2026.06.12/FaceTime%20Setup%202026.6.12.exe)
 - 内置语音识别模型（中英双语带标点），安装后无需下载即可使用
 - 支持自定义安装目录（不再强制安装到 C 盘）
-- 完整更新日志：[Release Notes](https://github.com/ZRegod/FaceTime/releases/tag/FaceTimev260260612)
+- 完整更新日志：[Release Notes](https://github.com/ZRegod/FaceTime/releases/tag/v2026.06.12)
 
 ## 核心功能
 
