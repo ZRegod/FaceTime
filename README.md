@@ -4,14 +4,14 @@
 
 ## 下载安装
 
-**最新版本：v2026.06.12**
+**最新版本：v2026.06.15**
 
 [![GitHub Release](https://img.shields.io/badge/download-latest-blue)](https://github.com/ZRegod/FaceTime/releases/latest)
 
-- Windows 安装包：[FaceTime Setup 2026.6.12.exe](https://github.com/ZRegod/FaceTime/releases/download/v2026.06.12/FaceTime%20Setup%202026.6.12.exe)
+- Windows 安装包：[FaceTime Setup 2026.6.15.exe](https://github.com/ZRegod/FaceTime/releases/download/v2026.06.15/FaceTime%20Setup%202026.6.15.exe)
 - 内置语音识别模型（中英双语带标点），安装后无需下载即可使用
 - 支持自定义安装目录（不再强制安装到 C 盘）
-- 完整更新日志：[Release Notes](https://github.com/ZRegod/FaceTime/releases/tag/v2026.06.12)
+- 完整更新日志：[Release Notes](https://github.com/ZRegod/FaceTime/releases/tag/v2026.06.15)
 
 ## 核心功能
 
@@ -246,6 +246,7 @@ npm run pack
 
 ### 版本历史
 
+- **v2026.06.15** - DashScope 云端 ASR 修复（实时识别文字正常显示）；修复发送后内容重复问题（位置追踪替代前缀匹配）；WebSocket 中文乱码修复（替换为标准 ws 库）；Vosk 启动性能优化（再次启动从 3-4 秒降至 <100ms）；语音识别模型打包进安装器（免下载）；新增免费多模态模型快速填入；修复 MiMo API 地址和模拟面试卡死问题；机器码稳定性优化；打包效率提升 60%
 - **v2026.06.12** - 重大更新版本。内置语音识别模型安装即用；修复滚轮卡死、滚动引擎锁死、ASR 文字重复叠加、18 秒延迟等 24 项问题；关闭 DeepSeek 深度思考模式（首字延迟降至 ~1 秒）；逐字稿回答质量优化；新增检查更新、首次引导、配置缺失提示、语音测试模拟发送；界面 DIY（三种主题 + 8 种预设色）；5 种本地模型可选 + 双重验证识别；许可证激活系统
 - **v2026.06.11** - 功能优化和 bug 修复
 - **v2026.06.10** - 初始版本发布
