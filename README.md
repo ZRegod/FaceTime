@@ -4,14 +4,15 @@
 
 ## 下载安装
 
-**最新版本：v2026.06.15**
+**最新版本：v2026.06.16**
 
 [![GitHub Release](https://img.shields.io/badge/download-latest-blue)](https://github.com/ZRegod/FaceTime/releases/latest)
 
-- Windows 安装包：[FaceTime Setup 2026.6.15.exe](https://github.com/ZRegod/FaceTime/releases/download/v2026.06.15/FaceTime%20Setup%202026.6.15.exe)
+- Windows 安装包：[FaceTime Setup 2026.6.16.exe](https://github.com/ZRegod/FaceTime/releases/download/v2026.06.16/FaceTime%20Setup%202026.6.16.exe)
+- 免安装版：[FaceTime-Portable-v2026.06.16.zip](https://github.com/ZRegod/FaceTime/releases/download/v2026.06.16/FaceTime-Portable-v2026.06.16.zip)
 - 内置语音识别模型（中英双语带标点），安装后无需下载即可使用
 - 支持自定义安装目录（不再强制安装到 C 盘）
-- 完整更新日志：[Release Notes](https://github.com/ZRegod/FaceTime/releases/tag/v2026.06.15)
+- 完整更新日志：[Release Notes](https://github.com/ZRegod/FaceTime/releases/tag/v2026.06.16)
 
 ## 核心功能
 
@@ -28,6 +29,9 @@
 - **历史记录** — 所有对话、会议、面试记录均可查看、复制、导出
 - **多 Key 轮换** — 支持配置多个 API Key，遇到限流自动切换
 - **资料上传** — 上传 JD 和简历，AI 结合背景信息生成更有针对性的回答
+- **知识库管理** — 上传简历、岗位 JD、技术文档（txt/pdf/doc/docx），支持文件上传和手动粘贴，AI 回答模块可一键从知识库选择资料，一次上传多处复用
+- **热词管理** — AI 自动从简历/JD 提取专业术语，6 个内置技术方向预设模板（前端/后端/数据科学/产品/设计/运维），统一配置本地和云端 ASR 热词，英文专业词汇识别准确率显著提升
+- **云端多模型** — 支持 Fun-ASR（推荐，支持热词）、Qwen-ASR、Paraformer 三种 DashScope 云端识别模型，可在设置中一键切换
 - **两者模式优化** — 详细版和逐字稿同时并行请求，生成中可随时切换查看
 - **界面 DIY** — 三种主题风格（深色/深夜/浅色）、8 种预设主题色 + 自定义取色、窗口透明度、背景不透明度，实时预览
 - **触摸屏支持** — 完整支持触摸屏滑动和鼠标滚轮滚动
@@ -67,7 +71,15 @@
 
 不确定？去「语音测试」页面先试试效果。
 
-### 3. 开始使用
+### 3. 配置知识库（可选）
+
+「设置」→「热词管理」：
+
+- 上传简历、岗位 JD 或技术文档（支持 txt/pdf/doc/docx 文件或手动粘贴）
+- 可选"同时用 AI 提取热词"，提升语音识别对专业术语的准确率
+- 在「AI 回答」页面点击「知识库」按钮，一键加载已保存的文档
+
+### 4. 开始使用
 
 - 在「AI 回答」页面输入面试问题，按回车获取回答
 - 按 `1` 开启语音监听，实时转写面试官提问
@@ -152,12 +164,14 @@ src/
 │   ├── machineHash.ts             # 机器码生成（用于许可证）
 │   └── services/
 │       ├── ai.ts                  # AI 接口服务（OpenAI / Claude）
-│       ├── streamingAsr.ts        # 流式语音识别（DashScope WebSocket）
+│       ├── streamingAsr.ts        # 流式语音识别（DashScope WebSocket + 热词表 API）
+│       ├── qwenAsr.ts             # Qwen Realtime ASR（独立协议实现）
 │       ├── vosk.ts                # Sherpa-ONNX 本地语音识别
 │       ├── twoPassVosk.ts         # 双重验证识别（在线流式 + 离线修正 + VAD + 热词）
 │       ├── whisper.ts             # Whisper 云端语音识别
 │       ├── audio.ts               # 音频采集管理
 │       ├── ocr.ts                 # Tesseract.js OCR
+│       ├── hotwordManager.ts      # 热词管理 + 知识库（AI 提取、预设模板、文档管理）
 │       └── sherpaModelManager.ts  # 模型管理（内置模型 + 在线下载 + 镜像加速）
 ├── preload/
 │   └── index.ts                   # 预加载脚本，暴露 window.api
@@ -165,11 +179,13 @@ src/
     ├── App.tsx                    # 主布局（侧边栏 + 内容区）
     ├── main.tsx                   # React 入口
     ├── components/
-    │   ├── AnswerPanel/           # AI 回答主面板
+    │   ├── AnswerPanel/           # AI 回答主面板（支持从知识库选择资料）
     │   ├── MockInterview/         # 模拟面试（Setup/Interview/Evaluation）
     │   ├── Overlay/               # 悬浮窗
     │   ├── History/               # 历史记录
     │   ├── Settings/              # 设置（含 AppearanceSettings、ShortcutRecorder）
+    │   ├── HotwordManager/        # 热词管理 + 知识库（文档上传、AI 提取、预设模板）
+    │   ├── KnowledgeBasePicker/   # 知识库文档选择器（复用组件）
     │   ├── AudioRecorder/         # 语音测试
     │   ├── ScreenCapture/         # 屏幕捕获
     │   ├── SetupWizard/           # 首次引导配置向导
@@ -234,9 +250,13 @@ npm run pack
 封装 OpenAI SDK 和 Anthropic SDK，支持流式输出。DeepSeek 模型自动禁用推理模式。通过 IPC 暴露给渲染进程，支持动态切换 provider。
 
 **语音识别**
-- 云端：`streamingAsr.ts` 通过 WebSocket 连接 DashScope 实时语音识别服务
+- 云端：`streamingAsr.ts` 通过 WebSocket 连接 DashScope 实时语音识别服务，支持热词表 API（vocabulary_id）提升专业术语识别率
+- 云端 Qwen：`qwenAsr.ts` 实现 Qwen Realtime 协议（事件驱动），支持 qwen3-asr-flash 系列模型
 - 本地：`vosk.ts` 调用 Sherpa-ONNX 本地引擎，支持离线识别
 - 两套实例分别处理系统音频（面试官）和麦克风（面试者）
+
+**热词管理 (`src/main/services/hotwordManager.ts`)**
+管理热词提取、预设模板和知识库文档。支持从简历/JD 自动提取专业术语（LLM 驱动），6 个内置技术方向预设，双格式输出（本地 sherpa-onnx 格式 + 云端 DashScope 格式）。知识库支持文档上传和持久化，AI 回答模块可一键选择已保存文档。
 
 **模型管理 (`src/main/services/sherpaModelManager.ts`)**
 管理 5 种流式模型 + 1 种离线修正模型 + VAD 模型。支持从安装目录自动复制内置模型（`ensureBundledModel`），在线下载时自动尝试 GitHub 镜像加速。
@@ -246,6 +266,7 @@ npm run pack
 
 ### 版本历史
 
+- **v2026.06.16** - 新增知识库管理（上传简历/JD/技术文档，AI 回答模块一键选择资料，一次上传多处复用）；新增热词管理（AI 自动提取专业术语，6 个预设模板，统一本地/云端配置）；DashScope 热词表 API 集成（vocabulary_id 方式，英文专业词汇识别率显著提升）；支持 Fun-ASR/Qwen-ASR/Paraformer 三种云端模型切换；修复 DashScope 云端 ASR 实时识别无输出和发送后重复显示问题；WebSocket 替换为标准 ws 库解决中文乱码
 - **v2026.06.15** - DashScope 云端 ASR 修复（实时识别文字正常显示）；修复发送后内容重复问题（位置追踪替代前缀匹配）；WebSocket 中文乱码修复（替换为标准 ws 库）；Vosk 启动性能优化（再次启动从 3-4 秒降至 <100ms）；语音识别模型打包进安装器（免下载）；新增免费多模态模型快速填入；修复 MiMo API 地址和模拟面试卡死问题；机器码稳定性优化；打包效率提升 60%
 - **v2026.06.12** - 重大更新版本。内置语音识别模型安装即用；修复滚轮卡死、滚动引擎锁死、ASR 文字重复叠加、18 秒延迟等 24 项问题；关闭 DeepSeek 深度思考模式（首字延迟降至 ~1 秒）；逐字稿回答质量优化；新增检查更新、首次引导、配置缺失提示、语音测试模拟发送；界面 DIY（三种主题 + 8 种预设色）；5 种本地模型可选 + 双重验证识别；许可证激活系统
 - **v2026.06.11** - 功能优化和 bug 修复
